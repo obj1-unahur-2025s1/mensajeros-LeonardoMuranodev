@@ -1,10 +1,16 @@
 object empresa {
     const mensajeros = [roberto, chuckNorris, neo]
 
+    //Metodos de consulta
+    method mensajeros() = mensajeros
+
     method mensajeriaEsGrande() = mensajeros.size() > 2
+
+    method primeroPuedeEntregarPaquete() = mensajeros.first().puedeEntregarPaquete()
 
     method pesoUltimoMensajero() = mensajeros.last().peso()
 
+    //metodos de indicacion
     method contratarMensajero(unMensajero){
         mensajeros.add(unMensajero)
     }
@@ -13,8 +19,34 @@ object empresa {
         mensajeros.remove(unMensajero)
     }
 
-    method despedirATodos(unMensajero){
+    method despedirATodos(){
         mensajeros.clear()
+    }
+}
+
+//Paquetes
+object paquetito {
+    method estaPago() = true
+}
+
+object paquetonViajero {
+    const destinos = []
+    var monto = 0
+
+    method estaPago() = monto >= 100 * destinos.size()
+
+    method pagar(unValor){
+        monto += unValor
+    }
+}
+
+object paqueteOriginal {
+    var monto = 0
+    
+    method estaPago() = monto >= 50
+
+    method pagarPaqueteOriginal(){
+        monto = 50
     }
 }
 
@@ -24,14 +56,12 @@ object roberto {
     var peso = 80
     var vehiculo = bicicleta
     var ubicacionDeEntrega = matrix
-    var paquetePago = true
+    var paquete = paquetito
 
     //Metodos de consulta
     method puedeEntregarPaquete(){
-        return ubicacionDeEntrega.dejaEntrar(self) && self.paqueteEstaPago()
+        return ubicacionDeEntrega.dejaEntrar(self) && paquete.estaPago()
     } 
-
-    method paqueteEstaPago() = paquetePago
 
     method peso() = peso + vehiculo.peso()
 
@@ -46,8 +76,8 @@ object roberto {
         vehiculo = unVehiculo
     }
 
-    method cambiarEstadoPaquete(unValor){
-        paquetePago = unValor 
+    method cambiarPaquete(unPaquete){
+        paquete = unPaquete 
     }
 
     method cambiarUbicacionDeEntrega(unLugar){
@@ -58,22 +88,20 @@ object roberto {
 object chuckNorris {
     //variables
     var ubicacionDeEntrega = matrix
-    var paquetePago = true
+    var paquete = paquetito
 
     //Metodos de consulta
     method puedeEntregarPaquete(){
-        return ubicacionDeEntrega.dejaEntrar(self) && self.paqueteEstaPago()
+        return ubicacionDeEntrega.dejaEntrar(self) && paquete.estaPago()
     } 
-
-    method paqueteEstaPago() = paquetePago
     
     method peso() = 80
 
     method puedeLlamar() = true
 
     //Metodos de indicacion
-    method cambiarEstadoPaquete(unValor){
-        paquetePago = unValor 
+    method cambiarPaquete(unPaquete){
+        paquete =  unPaquete
     }
 
     method cambiarUbicacionDeEntrega(unLugar){
@@ -85,14 +113,12 @@ object neo {
     //variables
     var credito = 15
     var ubicacionDeEntrega = matrix
-    var paquetePago = true
+    var paquete = paquetito
 
     //Metodos de consulta
     method puedeEntregarPaquete(){
-        return ubicacionDeEntrega.dejaEntrar(self) && self.paqueteEstaPago()
+        return ubicacionDeEntrega.dejaEntrar(self) && paquete.estaPago()
     } 
-
-    method paqueteEstaPago() = paquetePago
     
     method peso() = 0
 
@@ -103,13 +129,17 @@ object neo {
         credito += unaCantidad
     }
 
-    method cambiarEstadoPaquete(unValor){
-        paquetePago = unValor 
+    method cambiarPaquete(unPaquete){
+        paquete =  unPaquete
     }
 
     method cambiarUbicacionDeEntrega(unLugar){
         ubicacionDeEntrega = unLugar
     }
+}
+
+object thiaguillo {
+
 }
 
 //Vehiculos

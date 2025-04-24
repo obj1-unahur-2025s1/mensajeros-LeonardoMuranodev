@@ -3,7 +3,7 @@ import example.*
 describe "test de la primera parte" {
     test "Que roberto (90kg) puede llevar un paquete que está pago en un camión que tiene un acoplado."{
         roberto.cambiarPeso(90)
-        roberto.cambiarEstadoPaquete(true)
+        roberto.cambiarPaquete(paquetito)
         roberto.cambiarVehiculo(camion)
         camion.cambiarAcoplados(1)
         roberto.cambiarUbicacionDeEntrega(puenteDeBroklyn)
@@ -11,8 +11,42 @@ describe "test de la primera parte" {
     }
 
     test "Que neo con crédito no puede llevar un paquete que no está pago a la matrix."{
-        neo.cambiarEstadoPaquete(false)
+        neo.cambiarPaquete(paqueteOriginal)
         neo.cambiarUbicacionDeEntrega(matrix)
         assert.notThat(neo.puedeEntregarPaquete())
+    }
+}
+
+describe "test de la segunda parte" {
+    test "Despedir a todos los mensajeros"{
+        empresa.despedirATodos()
+        assert.equals(0, empresa.mensajeros().size())
+    }
+
+    test "Despedir a un mensajero"{
+        empresa.despedirMensajero(neo)
+        assert.equals(2, empresa.mensajeros().size())
+        assert.equals(roberto, empresa.mensajeros().first())
+        assert.equals(chuckNorris, empresa.mensajeros().last())
+    }
+
+    test "Mensajeria es grande: inicia ya con tres mensajeros, por lo que si es grande"{
+        assert.that(empresa.mensajeriaEsGrande())
+        assert.equals(3, empresa.mensajeros().size())
+    }
+
+    test "Averiguar el peso del ultimo mensajero: es neo, por lo que debe dar cero"{
+        assert.equals(0, empresa.pesoUltimoMensajero())
+    } 
+
+    test "Averiguar si el primer mensajero puede entregar el paquete"{
+        roberto.cambiarUbicacionDeEntrega(puenteDeBroklyn)
+        assert.that(empresa.primeroPuedeEntregarPaquete())
+    }
+
+    test "Contratar a un mensajero"{
+        empresa.contratarMensajero(thiaguillo)
+        assert.equals(4, empresa.mensajeros().size())
+        assert.equals(thiaguillo, empresa.mensajeros().last())
     }
 }
