@@ -1,13 +1,14 @@
 //Mensajeros
-
 object roberto {
-    var peso = 90
+    //variables
+    var peso = 80
     var vehiculo = bicicleta
     var ubicacionDeEntrega = matrix
     var paquetePago = true
 
+    //Metodos de consulta
     method puedeEntregarPaquete(){
-        return ubicacionDeEntrega.dejaEntrar(self) && paqueteEstaPago()
+        return ubicacionDeEntrega.dejaEntrar(self) && self.paqueteEstaPago()
     } 
 
     method paqueteEstaPago() = paquetePago
@@ -16,21 +17,32 @@ object roberto {
 
     method puedeLlamar() = false
 
+    //Metodos de indicacion
     method cambiarPeso(unPeso){
         peso = unPeso
     }
 
     method cambiarVehiculo(unVehiculo){
-    vehiculoo = unVehiculo
-    }
+        vehiculo = unVehiculo
     }
 
+    method cambiarEstadoPaquete(unValor){
+        paquetePago = unValor 
+    }
+
+    method cambiarUbicacionDeEntrega(unLugar){
+        ubicacionDeEntrega = unLugar
+    }
+}
+
 object chuckNorris {
+    //variables
     var ubicacionDeEntrega = matrix
     var paquetePago = true
 
+    //Metodos de consulta
     method puedeEntregarPaquete(){
-        return ubicacionDeEntrega.dejaEntrar(self) && paqueteEstaPago()
+        return ubicacionDeEntrega.dejaEntrar(self) && self.paqueteEstaPago()
     } 
 
     method paqueteEstaPago() = paquetePago
@@ -38,15 +50,26 @@ object chuckNorris {
     method peso() = 80
 
     method puedeLlamar() = true
+
+    //Metodos de indicacion
+    method cambiarEstadoPaquete(unValor){
+        paquetePago = unValor 
+    }
+
+    method cambiarUbicacionDeEntrega(unLugar){
+        ubicacionDeEntrega = unLugar
+    }
 }
 
 object neo {
+    //variables
     var credito = 15
     var ubicacionDeEntrega = matrix
     var paquetePago = true
 
+    //Metodos de consulta
     method puedeEntregarPaquete(){
-        return ubicacionDeEntrega.dejaEntrar(self) && paqueteEstaPago()
+        return ubicacionDeEntrega.dejaEntrar(self) && self.paqueteEstaPago()
     } 
 
     method paqueteEstaPago() = paquetePago
@@ -55,8 +78,17 @@ object neo {
 
     method puedeLlamar() = credito > 10
 
+    //Metodos de indicacion
     method acreditarOConsumirCredito(unaCantidad){
         credito += unaCantidad
+    }
+
+    method cambiarEstadoPaquete(unValor){
+        paquetePago = unValor 
+    }
+
+    method cambiarUbicacionDeEntrega(unLugar){
+        ubicacionDeEntrega = unLugar
     }
 }
 
@@ -68,10 +100,13 @@ object bicicleta {
 //Toneladas 1000KG.
 object camion {
     var acoplados = 2
+
     method peso() = acoplados * 500
+
+    method cambiarAcoplados(unValor){
+        acoplados = unValor
+    }
 }
-
-
 
 //Lugares
 
