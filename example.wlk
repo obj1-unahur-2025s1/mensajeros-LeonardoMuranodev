@@ -1,3 +1,23 @@
+object empresa {
+    const mensajeros = [roberto, chuckNorris, neo]
+
+    method mensajeriaEsGrande() = mensajeros.size() > 2
+
+    method pesoUltimoMensajero() = mensajeros.last().peso()
+
+    method contratarMensajero(unMensajero){
+        mensajeros.add(unMensajero)
+    }
+
+    method despedirMensajero(unMensajero){
+        mensajeros.remove(unMensajero)
+    }
+
+    method despedirATodos(unMensajero){
+        mensajeros.clear()
+    }
+}
+
 //Mensajeros
 object roberto {
     //variables
