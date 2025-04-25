@@ -50,3 +50,13 @@ describe "test de la segunda parte" {
         assert.equals(thiaguillo, empresa.mensajeros().last())
     }
 }
+
+describe "test de la tercera parte" {
+    test "hay sobrepeso en la empresa: no hay"{
+        assert.notThat(empresa.haySobrepeso())
+    }
+
+    test "Si hay alguno que pueda entregar el paquete gratis, deberia ser cierto"{
+        assert.that(empresa.hayAlgunMensajeroQuePuedeEntregar(paquetito))
+    }
+}

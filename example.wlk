@@ -1,14 +1,34 @@
 object empresa {
     const mensajeros = [roberto, chuckNorris, neo]
+    const paquetesPendientes = []
+    var facturacion = 0
 
-    //Metodos de consulta
-    method mensajeros() = mensajeros
+    //Metodos de consulta: 2da parte
+    method getMensajeros() = mensajeros
 
     method mensajeriaEsGrande() = mensajeros.size() > 2
 
     method primeroPuedeEntregarPaquete() = mensajeros.first().puedeEntregarPaquete()
 
     method pesoUltimoMensajero() = mensajeros.last().peso()
+
+    //Metodos de consulta: 3ra parte
+
+    method hayAlgunMensajeroQuePuedeEntregar(unPaquete){
+        return mensajeros.any({e => unPaquete.puedeEntregarPaquete(e)})
+    }
+
+    method mensajerosQuePuedenEntregar(unPaquete){
+        if(self.hayAlgunMensajeroQuePuedeEntregar(unPaquete)){
+            return mensajeros.filter({e => unPaquete.puedeEntregarPaquete(e)})
+        } else{
+            return []
+        }
+    } 
+
+    method haySobrepeso() = mensajeros.peso().sum() / mensajeros.size() >= 500
+
+    method facturacion() = facturacion
 
     //metodos de indicacion
     method contratarMensajero(unMensajero){
@@ -22,31 +42,100 @@ object empresa {
     method despedirATodos(){
         mensajeros.clear()
     }
+
+    //metodos de indicacion: 3ra parte
+    method enviarUnPaquete(unPaquete){
+        if(self.mensajerosQuePuedenEntregar(unPaquete).isEmpty()){
+            paquetesPendientes.add(unPaquete)
+        } else {
+            self.mensajerosQuePuedenEntregar(unPaquete).anyOne().entregarPaquete(unPaquete)
+        }
+    }
+
+    method enviarLosPaquetes(unaListaDePaquetes) {
+        unaListaDePaquetes.forEach({e => self.enviarUnPaquete(e)})
+    }
+
+    method enviarPendienteMasCaro(){
+        const elMasCaro = paquetesPendientes.sortBy({e => e.valorPaquete()}).last()
+        if(self.hayAlgunMensajeroQuePuedeEntregar(elMasCaro)){
+            self.enviarUnPaquete(elMasCaro)
+            paquetesPendientes.remove(elMasCaro)
+        }
+    }
+
+    method aumentarFacturacion(unValor){
+        facturacion += unValor
+    }
 }
 
 //Paquetes
 object paquetito {
+    var ubicacionDeEntrega = matrix
+
+    //Metodos de consulta
+    method puedeEntregarPaquete(unMensajero){
+        return ubicacionDeEntrega.dejaEntrar(unMensajero) && self.estaPago()
+    } 
+    
     method estaPago() = true
+
+    method valorPaquete() = 0
+
+    //Metodos de indicacion
+    method cambiarUbicacionDeEntrega(unLugar){
+        ubicacionDeEntrega = unLugar
+    }
 }
 
 object paquetonViajero {
     const destinos = []
-    var monto = 0
+    var montoPagado = 0
 
-    method estaPago() = monto >= 100 * destinos.size()
+    //metodos de consulta
+    method puedeEntregarPaquete(unMensajero){
+        return destinos.all({e => e.dejaEntrar(unMensajero)}) && self.estaPago()
+    }
+    
+    method estaPago() = montoPagado >= self.valorPaquete()
 
+    method valorPaquete() = 100 * destinos.size()
+
+    //metodos de indicacion
     method pagar(unValor){
-        monto += unValor
+        montoPagado += unValor
+    }
+
+    method agregarUbicacionDeEntrega(unLugar){
+        destinos.add(unLugar)
+    }
+
+    method eliminarUbicacionDeEntrega(unLugar){
+        destinos.remove(unLugar)
     }
 }
 
 object paqueteOriginal {
-    var monto = 0
+    var montoPagado = 0
+    var ubicacionDeEntrega = matrix
     
-    method estaPago() = monto >= 50
+    //metodos de consulta
+    method puedeEntregarPaquete(unMensajero){
+        return ubicacionDeEntrega.dejaEntrar(unMensajero) && self.estaPago()
+    }
+    
+    method estaPago() = montoPagado >= self.valorPaquete()
 
-    method pagarPaqueteOriginal(){
-        monto = 50
+    method valorPaquete() = 50
+
+    //metodos de indicacion
+    //Para mantener polimorfismo con el paqueton viajero
+    method pagar(unValor){
+        montoPagado = 50
+    }
+
+    method cambiarUbicacionDeEntrega(unLugar){
+        ubicacionDeEntrega = unLugar
     }
 }
 
@@ -55,19 +144,18 @@ object roberto {
     //variables
     var peso = 80
     var vehiculo = bicicleta
-    var ubicacionDeEntrega = matrix
-    var paquete = paquetito
 
     //Metodos de consulta
-    method puedeEntregarPaquete(){
-        return ubicacionDeEntrega.dejaEntrar(self) && paquete.estaPago()
-    } 
-
     method peso() = peso + vehiculo.peso()
-
     method puedeLlamar() = false
 
     //Metodos de indicacion
+    method entregarPaquete(unPaquete){
+        if (unPaquete.puedeEntregarPaquete(self)){
+            empresa.aumentarFacturacion(unPaquete.valorPaquete())
+        }
+    }
+
     method cambiarPeso(unPeso){
         peso = unPeso
     }
@@ -75,71 +163,43 @@ object roberto {
     method cambiarVehiculo(unVehiculo){
         vehiculo = unVehiculo
     }
-
-    method cambiarPaquete(unPaquete){
-        paquete = unPaquete 
-    }
-
-    method cambiarUbicacionDeEntrega(unLugar){
-        ubicacionDeEntrega = unLugar
-    }
 }
 
 object chuckNorris {
-    //variables
-    var ubicacionDeEntrega = matrix
-    var paquete = paquetito
-
     //Metodos de consulta
-    method puedeEntregarPaquete(){
-        return ubicacionDeEntrega.dejaEntrar(self) && paquete.estaPago()
-    } 
-    
     method peso() = 80
-
     method puedeLlamar() = true
 
     //Metodos de indicacion
-    method cambiarPaquete(unPaquete){
-        paquete =  unPaquete
-    }
-
-    method cambiarUbicacionDeEntrega(unLugar){
-        ubicacionDeEntrega = unLugar
+    method entregarPaquete(unPaquete){
+        if (unPaquete.puedeEntregarPaquete(self)){
+            empresa.aumentarFacturacion(unPaquete.valorPaquete())
+        }
     }
 }
 
 object neo {
     //variables
     var credito = 15
-    var ubicacionDeEntrega = matrix
-    var paquete = paquetito
 
     //Metodos de consulta
-    method puedeEntregarPaquete(){
-        return ubicacionDeEntrega.dejaEntrar(self) && paquete.estaPago()
-    } 
-    
     method peso() = 0
-
     method puedeLlamar() = credito > 10
 
     //Metodos de indicacion
+    method entregarPaquete(unPaquete){
+        if (unPaquete.puedeEntregarPaquete(self)){
+            empresa.aumentarFacturacion(unPaquete.valorPaquete())
+        }
+    }
+
     method acreditarOConsumirCredito(unaCantidad){
         credito += unaCantidad
-    }
-
-    method cambiarPaquete(unPaquete){
-        paquete =  unPaquete
-    }
-
-    method cambiarUbicacionDeEntrega(unLugar){
-        ubicacionDeEntrega = unLugar
     }
 }
 
 object thiaguillo {
-
+    //punto 9, luego se modelara
 }
 
 //Vehiculos
@@ -159,7 +219,6 @@ object camion {
 }
 
 //Lugares
-
 object puenteDeBroklyn {
     method dejaEntrar(unMensajero) = unMensajero.peso() <= 1000
 }
