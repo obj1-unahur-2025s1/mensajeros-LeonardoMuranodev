@@ -139,6 +139,30 @@ object paqueteOriginal {
     }
 }
 
+object paqueteInvertido {
+    var montoPagado = 0
+    var ubicacionDeEntrega = matrix
+    
+    //metodos de consulta
+    method puedeEntregarPaquete(unMensajero){
+        return not (ubicacionDeEntrega.dejaEntrar(unMensajero) && self.estaPago())
+    }
+    
+    method estaPago() = montoPagado >= self.valorPaquete()
+
+    method valorPaquete() = 70
+
+    //metodos de indicacion
+    //Para mantener polimorfismo con el paqueton viajero
+    method pagar(unValor){
+        montoPagado = 70
+    }
+
+    method cambiarUbicacionDeEntrega(unLugar){
+        ubicacionDeEntrega = unLugar
+    }
+}
+
 //Mensajeros
 object roberto {
     //variables
@@ -195,6 +219,26 @@ object neo {
 
     method acreditarOConsumirCredito(unaCantidad){
         credito += unaCantidad
+    }
+}
+
+object kratos {
+    //variables
+    var peso = 15
+
+    //Metodos de consulta
+    method peso() = peso
+    method puedeLlamar() = peso < 100
+
+    //Metodos de indicacion
+    method entregarPaquete(unPaquete){
+        if (unPaquete.puedeEntregarPaquete(self)){
+            empresa.aumentarFacturacion(unPaquete.valorPaquete())
+        }
+    }
+
+    method cambiarPeso(unPeso){
+        peso = unPeso
     }
 }
 
