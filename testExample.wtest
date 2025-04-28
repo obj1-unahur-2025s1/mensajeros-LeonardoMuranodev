@@ -1,38 +1,56 @@
 import example.*
 
-describe "test de la primera parte" {
-    test "Que roberto (90kg) puede llevar un paquete que está pago en un camión que tiene un acoplado."{
+describe "test" {
+    test "Que roberto (90kg) puede llevar un paquete viajero que está pago (con los dos destinos: el puente de broklyn) en un camión que tiene un acoplado."{
         roberto.cambiarPeso(90)
-        roberto.cambiarPaquete(paquetito)
         roberto.cambiarVehiculo(camion)
         camion.cambiarAcoplados(1)
-        roberto.cambiarUbicacionDeEntrega(puenteDeBroklyn)
-        assert.that(roberto.puedeEntregarPaquete())
+        paquetonViajero.agregarUbicacionDeEntrega(puenteDeBroklyn)
+        paquetonViajero.agregarUbicacionDeEntrega(puenteDeBroklyn)
+        paquetonViajero.pagar(200)
+        roberto.entregarPaquete(paquetonViajero)
+        assert.that(puenteDeBroklyn.dejaEntrar(roberto))
+        assert.that(paquetonViajero.estaPago())
+        assert.equals(590, roberto.peso())
+        assert.equals(200, empresa.facturacion())
     }
 
-    test "Que neo con crédito no puede llevar un paquete que no está pago a la matrix."{
-        neo.cambiarPaquete(paqueteOriginal)
-        neo.cambiarUbicacionDeEntrega(matrix)
-        assert.notThat(neo.puedeEntregarPaquete())
+    test "Neo no puede entregar un paquete  a la Matrix porque consumio credito y no puede llamar" {
+        paquetito.cambiarUbicacionDeEntrega(matrix)
+        neo.entregarPaquete(paquetito)
+        neo.acreditarOConsumirCredito(-8)
+        assert.notThat(matrix.dejaEntrar(neo))
+        assert.equals(0, empresa.facturacion()) // No se ha ganado dinero
     }
+
+    test "La empresa tiene sobrepeso si el promedio de los mensajeros es superior a 500kg, aqui es de 705, ya que solo esta roberto con su bicleta" {
+    roberto.cambiarPeso(700) // Roberto tiene ahora 700 kg
+    roberto.cambiarVehiculo(bicicleta)
+    empresa.despedirATodos()
+    assert.equals(700 + bicicleta.peso(), roberto.peso())
+    empresa.contratarMensajero(roberto)
+    assert.that(empresa.haySobrepeso())
+    }
+
+
 }
 
 describe "test de la segunda parte" {
     test "Despedir a todos los mensajeros"{
         empresa.despedirATodos()
-        assert.equals(0, empresa.mensajeros().size())
+        assert.equals(0, empresa.getMensajeros().size())
     }
 
     test "Despedir a un mensajero"{
         empresa.despedirMensajero(neo)
-        assert.equals(2, empresa.mensajeros().size())
-        assert.equals(roberto, empresa.mensajeros().first())
-        assert.equals(chuckNorris, empresa.mensajeros().last())
+        assert.equals(2, empresa.getMensajeros().size())
+        assert.equals(roberto, empresa.getMensajeros().first())
+        assert.equals(chuckNorris, empresa.getMensajeros().last())
     }
 
     test "Mensajeria es grande: inicia ya con tres mensajeros, por lo que si es grande"{
         assert.that(empresa.mensajeriaEsGrande())
-        assert.equals(3, empresa.mensajeros().size())
+        assert.equals(3, empresa.getMensajeros().size())
     }
 
     test "Averiguar el peso del ultimo mensajero: es neo, por lo que debe dar cero"{
@@ -40,14 +58,13 @@ describe "test de la segunda parte" {
     } 
 
     test "Averiguar si el primer mensajero puede entregar el paquete"{
-        roberto.cambiarUbicacionDeEntrega(puenteDeBroklyn)
-        assert.that(empresa.primeroPuedeEntregarPaquete())
+        assert.notThat(empresa.primeroPuedeEntregarPaquete(paquetito))
     }
 
     test "Contratar a un mensajero"{
-        empresa.contratarMensajero(thiaguillo)
-        assert.equals(4, empresa.mensajeros().size())
-        assert.equals(thiaguillo, empresa.mensajeros().last())
+        empresa.contratarMensajero(kratos)
+        assert.equals(4, empresa.getMensajeros().size())
+        assert.equals(kratos, empresa.getMensajeros().last())
     }
 }
 

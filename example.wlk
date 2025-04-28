@@ -8,7 +8,7 @@ object empresa {
 
     method mensajeriaEsGrande() = mensajeros.size() > 2
 
-    method primeroPuedeEntregarPaquete() = mensajeros.first().puedeEntregarPaquete()
+    method primeroPuedeEntregarPaquete(unPaquete) = unPaquete.puedeEntregarPaquete(mensajeros.first())
 
     method pesoUltimoMensajero() = mensajeros.last().peso()
 
@@ -26,7 +26,7 @@ object empresa {
         }
     } 
 
-    method haySobrepeso() = mensajeros.peso().sum() / mensajeros.size() >= 500
+    method haySobrepeso() = mensajeros.map({e => e.peso()}).sum() / mensajeros.size() >= 500
 
     method facturacion() = facturacion
 
@@ -240,10 +240,6 @@ object kratos {
     method cambiarPeso(unPeso){
         peso = unPeso
     }
-}
-
-object thiaguillo {
-    //punto 9, luego se modelara
 }
 
 //Vehiculos
