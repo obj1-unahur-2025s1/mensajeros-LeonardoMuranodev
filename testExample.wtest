@@ -8,7 +8,6 @@ describe "test" {
         paquetonViajero.agregarUbicacionDeEntrega(puenteDeBroklyn)
         paquetonViajero.agregarUbicacionDeEntrega(puenteDeBroklyn)
         paquetonViajero.pagar(200)
-        roberto.entregarPaquete(paquetonViajero)
         assert.that(puenteDeBroklyn.dejaEntrar(roberto))
         assert.that(paquetonViajero.estaPago())
         assert.equals(590, roberto.peso())
@@ -17,7 +16,6 @@ describe "test" {
 
     test "Neo no puede entregar un paquete  a la Matrix porque consumio credito y no puede llamar" {
         paquetito.cambiarUbicacionDeEntrega(matrix)
-        neo.entregarPaquete(paquetito)
         neo.acreditarOConsumirCredito(-8)
         assert.notThat(matrix.dejaEntrar(neo))
         assert.equals(0, empresa.facturacion()) // No se ha ganado dinero
