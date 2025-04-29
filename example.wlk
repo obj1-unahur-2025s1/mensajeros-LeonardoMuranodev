@@ -1,9 +1,9 @@
 object empresa {
     const mensajeros = [roberto, chuckNorris, neo]
     const paquetesPendientes = []
-    var facturacion = 0
+    const paquetesEnviados = []
 
-    //Metodos de consulta: 2da parte
+    //Metodos de consulta: 2da parte: ok
     method getMensajeros() = mensajeros
 
     method mensajeriaEsGrande() = mensajeros.size() > 2
@@ -12,7 +12,7 @@ object empresa {
 
     method pesoUltimoMensajero() = mensajeros.last().peso()
 
-    //Metodos de consulta: 3ra parte
+    //Metodos de consulta: 3ra parte:ok
 
     method hayAlgunMensajeroQuePuedeEntregar(unPaquete){
         return mensajeros.any({e => unPaquete.puedeEntregarPaquete(e)})
@@ -26,9 +26,9 @@ object empresa {
         }
     } 
 
-    method haySobrepeso() = mensajeros.map({e => e.peso()}).sum() / mensajeros.size() >= 500
+    method haySobrepeso() = mensajeros.sum({e => e.peso()}) / mensajeros.size() >= 500
 
-    method facturacion() = facturacion
+    method facturacion() = paquetesEnviados.sum({p => p.valorPaquete()})
 
     //metodos de indicacion
     method contratarMensajero(unMensajero){
@@ -48,7 +48,7 @@ object empresa {
         if(self.mensajerosQuePuedenEntregar(unPaquete).isEmpty()){
             paquetesPendientes.add(unPaquete)
         } else {
-            self.mensajerosQuePuedenEntregar(unPaquete).anyOne().entregarPaquete(unPaquete)
+            paquetesEnviados.add(unPaquete)
         }
     }
 
@@ -57,15 +57,11 @@ object empresa {
     }
 
     method enviarPendienteMasCaro(){
-        const elMasCaro = paquetesPendientes.sortBy({e => e.valorPaquete()}).last()
+        const elMasCaro = paquetesPendientes.max({e => e.valorPaquete()})
         if(self.hayAlgunMensajeroQuePuedeEntregar(elMasCaro)){
             self.enviarUnPaquete(elMasCaro)
             paquetesPendientes.remove(elMasCaro)
         }
-    }
-
-    method aumentarFacturacion(unValor){
-        facturacion += unValor
     }
 }
 
@@ -163,7 +159,7 @@ object paqueteInvertido {
     }
 }
 
-//Mensajeros
+//Mensajeros: ok
 object roberto {
     //variables
     var peso = 80
@@ -174,12 +170,6 @@ object roberto {
     method puedeLlamar() = false
 
     //Metodos de indicacion
-    method entregarPaquete(unPaquete){
-        if (unPaquete.puedeEntregarPaquete(self)){
-            empresa.aumentarFacturacion(unPaquete.valorPaquete())
-        }
-    }
-
     method cambiarPeso(unPeso){
         peso = unPeso
     }
@@ -195,30 +185,20 @@ object chuckNorris {
     method puedeLlamar() = true
 
     //Metodos de indicacion
-    method entregarPaquete(unPaquete){
-        if (unPaquete.puedeEntregarPaquete(self)){
-            empresa.aumentarFacturacion(unPaquete.valorPaquete())
-        }
-    }
 }
 
 object neo {
     //variables
-    var credito = 15
+    var tieneCredito = true
 
     //Metodos de consulta
     method peso() = 0
-    method puedeLlamar() = credito > 10
+    method puedeLlamar() = tieneCredito
 
     //Metodos de indicacion
-    method entregarPaquete(unPaquete){
-        if (unPaquete.puedeEntregarPaquete(self)){
-            empresa.aumentarFacturacion(unPaquete.valorPaquete())
-        }
-    }
 
-    method acreditarOConsumirCredito(unaCantidad){
-        credito += unaCantidad
+    method acreditarOConsumirCredito(){
+        tieneCredito = !tieneCredito
     }
 }
 
@@ -231,18 +211,13 @@ object kratos {
     method puedeLlamar() = peso < 100
 
     //Metodos de indicacion
-    method entregarPaquete(unPaquete){
-        if (unPaquete.puedeEntregarPaquete(self)){
-            empresa.aumentarFacturacion(unPaquete.valorPaquete())
-        }
-    }
 
     method cambiarPeso(unPeso){
         peso = unPeso
     }
 }
 
-//Vehiculos
+//Vehiculos: ok 
 object bicicleta {
     method peso() = 5
 }
@@ -258,7 +233,7 @@ object camion {
     }
 }
 
-//Lugares
+//Lugares: ok
 object puenteDeBroklyn {
     method dejaEntrar(unMensajero) = unMensajero.peso() <= 1000
 }
